@@ -13,12 +13,29 @@ from PyQt5.QtCore import Qt, QTimer, QObject, pyqtSignal
 from PyQt5.QtGui import QKeySequence, QKeyEvent, QMouseEvent
 
 from vimiv import api, utils
-from vimiv.commands import runners, search
+from vimiv.commands import runners
 
 
 SequenceT = Tuple[str, ...]
 
 _logger = utils.log.module_logger(__name__)
+
+
+def eventfunc(reason: str):
+    """Decorator for functions that handle events.
+
+    The decorator ensures the correct api methods for setup / teardown are called.
+    """
+
+    def decorator(func):
+        def inner(*args, **kwargs):
+            api.status.clear(reason)
+            func(*args, **kwargs)
+            api.signals.event_handled.emit()
+
+        return inner
+
+    return decorator
 
 
 class TempKeyStorage(QTimer):
@@ -118,9 +135,9 @@ class EventHandlerMixin:
 
     partial_handler = PartialHandler()
 
+    @eventfunc("KeyPressEvent")
     def keyPressEvent(self, event: QKeyEvent):
         """Handle key press event for the widget."""
-        api.status.clear("KeyPressEvent")
         try:
             keysequence = keyevent_to_sequence(event)
         except ValueError:  # Only modifier pressed
@@ -133,7 +150,7 @@ class EventHandlerMixin:
         if keyname == "<escape>" and mode in api.modes.GLOBALS:
             _logger.debug("KeyPressEvent: handling <escape> key specially")
             self.partial_handler.clear_keys()
-            search.search.clear()
+            api.signals.escape_pressed.emit()
             api.status.update("escape pressed")
         # Count
         elif keyname and keyname in string.digits and mode != api.modes.COMMAND:
@@ -143,16 +160,16 @@ class EventHandlerMixin:
             super().keyPressEvent(event)  # type: ignore
             api.status.update("regular Qt event")
 
+    @eventfunc("MousePressEvent")
     def mousePressEvent(self, event: QMouseEvent):
         """Handle mouse press event for the widget."""
-        api.status.clear("MousePressEvent")
         if not self._process_event(mouseevent_to_sequence(event)):
             super().mousePressEvent(event)  # type: ignore
             api.status.update("regular Qt event")
 
+    @eventfunc("MouseDoubleClickEvent")
     def mouseDoubleClickEvent(self, event: QMouseEvent):
         """Handle mouse press event for the widget."""
-        api.status.clear("MouseDoubleClickEvent")
         if not self._process_event(
             mouseevent_to_sequence(event, prefix="double-button")
         ):

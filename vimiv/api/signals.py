@@ -35,6 +35,9 @@ class _SignalHandler(QObject):
         svg_loaded: Emitted when the file handler loaded a new vector graphic.
             arg1: The path as the VectorGraphic class is constructed directly.
             arg2: True if it is only reloaded.
+
+        event_handled: Emitted when an event (e.g. key press) was handled.
+        escape_pressed: Emitted when the escape key was pressed.
     """
 
     # Emitted when new images should be loaded
@@ -53,6 +56,10 @@ class _SignalHandler(QObject):
     movie_loaded = pyqtSignal(QMovie, bool)
     svg_loaded = pyqtSignal(str, bool)
 
+    # Related to the eventhandler
+    event_handled = pyqtSignal()
+    escape_pressed = pyqtSignal()
+
 
 _signal_handler = _SignalHandler()  # Instance of Qt signal handler to work with
 
@@ -65,3 +72,5 @@ image_changed = _signal_handler.image_changed
 pixmap_loaded = _signal_handler.pixmap_loaded
 movie_loaded = _signal_handler.movie_loaded
 svg_loaded = _signal_handler.svg_loaded
+event_handled = _signal_handler.event_handled
+escape_pressed = _signal_handler.escape_pressed
