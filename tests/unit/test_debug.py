@@ -5,4 +5,5 @@ from vimiv.utils import lazy
 
 def test_dummy():
     pyexiv2 = lazy.import_module("pyexiv2", optional=True)
-    assert pyexiv2 is not None
+    metadata_cls = pyexiv2.ImageMetadata
+    assert metadata_cls is not None
