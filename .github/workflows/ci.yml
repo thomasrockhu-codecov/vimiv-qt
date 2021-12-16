@@ -19,7 +19,13 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get install libxkbcommon-x11-0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xinerama0 libxcb-xfixes0 libexiv2-dev libboost-python-dev
+        printf "\n\n\n\n"
         sudo ln -s /usr/lib/x86_64-linux-gnu/libboost_python3.so /usr/lib/x86_64-linux-gnu/libboost_python310.so
+        printf "\n\n\n\n"
+        ls /usr/lib/x86_64-linux-gnu
+        printf "\n\n\n\n"
+        ls /usr/lib
+        printf "\n\n\n\n"
         python -m pip install --upgrade pip
         pip install tox
     - name: Test with tox
