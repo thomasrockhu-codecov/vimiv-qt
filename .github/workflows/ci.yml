@@ -30,6 +30,7 @@ jobs:
         pip install tox
     - name: Test with tox
       run: |
+        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu
         tox -e ${{ matrix.toxenv }}
       env:
         CI: Github-Actions
