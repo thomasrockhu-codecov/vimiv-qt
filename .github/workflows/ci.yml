@@ -19,6 +19,8 @@ jobs:
 
     - name: Install boost
       run: |
+        echo ${{ runner.python-version }}
+
         sudo apt-get install build-essential g++ python-dev autotools-dev libicu-dev libbz2-dev
 
         python --version
@@ -43,8 +45,10 @@ jobs:
 
     - name: Test with tox
       run: |
-        export LD_LIBRARY_PATH=boost/install/lib:$LD_LIBRARY_PATH
-        export CPATH=boost/install/include:$CPATH
+        pwd
+        ls
+        export LD_LIBRARY_PATH=$(pwd)/boost/install/lib:$LD_LIBRARY_PATH
+        export CPATH=$(pwd)/boost/install/include:$CPATH
         tox -e ${{ matrix.toxenv }}
       env:
         CI: Github-Actions
