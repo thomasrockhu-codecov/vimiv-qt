@@ -26,6 +26,7 @@ jobs:
 
         wget -O boost.tar.gz https://sourceforge.net/projects/boost/files/boost/1.78.0/boost_1_78_0.tar.gz/download
         tar xf boost.tar.gz
+        mv boost_1_78_0 boost
         cd boost
         mkdir install
         ./bootstrap.sh --prefix=install
