@@ -19,23 +19,14 @@ jobs:
 
     - name: Install boost
       run: |
-        echo ${{ runner.python-version }}
-
         sudo apt-get install build-essential g++ python-dev autotools-dev libicu-dev libbz2-dev
-
-        python --version
-        pwd
 
         wget -O boost.tar.gz https://sourceforge.net/projects/boost/files/boost/1.78.0/boost_1_78_0.tar.gz/download
         tar xf boost.tar.gz
-        mv boost_1_78_0 boost
-        cd boost
+        cd boost_1_78_0
         mkdir install
         ./bootstrap.sh --prefix=install
         sudo ./b2 --with=all install
-
-        ls install/lib
-        ls install/include
 
     - name: Install dependencies
       run: |
@@ -45,8 +36,9 @@ jobs:
 
     - name: Test with tox
       run: |
-        export LD_FLAGS="-L$(pwd)/boost/install/lib"
-        export CPATH=$(pwd)/boost/install/include:$CPATH
+        export LD_LIBRARY_PATH=$(pwd)/boost_1_78_0/install/lib:$LD_LIBRARY_PATH
+        export CPATH=$(pwd)/boost_1_78_0/install/include:$CPATH
+        ls $(pwd)/boost_1_78_0/install/lib
         tox -e ${{ matrix.toxenv }}
       env:
         CI: Github-Actions
