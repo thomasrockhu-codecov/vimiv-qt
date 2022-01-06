@@ -45,9 +45,7 @@ jobs:
 
     - name: Test with tox
       run: |
-        pwd
-        ls
-        export LD_LIBRARY_PATH=$(pwd)/boost/install/lib:$LD_LIBRARY_PATH
+        export LD_FLAGS="-L$(pwd)/boost/install/lib"
         export CPATH=$(pwd)/boost/install/include:$CPATH
         tox -e ${{ matrix.toxenv }}
       env:
